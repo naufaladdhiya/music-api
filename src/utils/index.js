@@ -3,9 +3,8 @@ const mapSongDBToModel = ({ album_id, ...args }) => ({
   albumId: album_id,
 });
 
-const mapAlbumDBToModel = ({ cover_url, ...args }) => ({
+const mapAlbumDBToModel = ({ ...args }) => ({
   ...args,
-  coverUrl: cover_url,
 });
 
 module.exports = { mapSongDBToModel, mapAlbumDBToModel };

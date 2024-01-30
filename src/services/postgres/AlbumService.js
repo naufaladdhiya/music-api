@@ -38,15 +38,13 @@ class AlbumService {
 
   async editAlbumById(id, { name, year }) {
     const updatedAt = new Date().toISOString();
-    const results = await this._pool.query({
-      text: "UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id",
+    const result = await this._pool.query({
+      text: "UPDATE albums SET name = $1, year = $2, updated_at = $3 WHERE id = $4 RETURNING id",
       values: [name, year, updatedAt, id],
     });
 
-    if (!results.rows.length)
+    if (!result.rows.length)
       throw new NotFoundError("Gagal memperbarui album. Id tidak ditemukan");
-
-    return results.rows[0].id;
   }
 
   async deleteAlbumById(id) {
