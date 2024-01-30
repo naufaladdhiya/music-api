@@ -33,9 +33,28 @@ class SongService {
     return result.rows[0].id;
   }
 
-  async getSongs() {
-    const result = await this._pool.query("SELECT * FROM songs");
-    return result.rows.map(mapSongDBToModel);
+  async getSongs(title, performer) {
+    let query = "";
+    if (title && performer) {
+      query = {
+        text: "SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1 AND LOWER(performer) LIKE $2",
+        values: [`%${title.toLowerCase()}%`, `%${performer.toLowerCase()}%`],
+      };
+    } else if (title) {
+      query = {
+        text: "SELECT id, title, performer FROM songs WHERE LOWER(title) LIKE $1",
+        values: [`%${title.toLowerCase()}%`],
+      };
+    } else if (performer) {
+      query = {
+        text: "SELECT id, title, performer FROM songs WHERE LOWER(performer) LIKE $1",
+        values: [`%${performer.toLowerCase()}%`],
+      };
+    } else {
+      query = "SELECT id, title, performer FROM songs";
+    }
+    const result = await this._pool.query(query);
+    return result.rows;
   }
 
   async getSongById(id) {
