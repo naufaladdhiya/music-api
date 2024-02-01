@@ -10,7 +10,7 @@ class UserService {
     this._pool = new Pool();
   }
 
-  async addUser() {
+  async addUser({ username, password, fullname }) {
     await this.verifyExistUser(username);
 
     const id = `user-${nanoid(16)}`;

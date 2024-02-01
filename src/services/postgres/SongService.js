@@ -62,9 +62,9 @@ class SongService {
       text: "SELECT * FROM songs WHERE id = $1",
       values: [id],
     });
-    if (!result.rows.length) throw new NotFoundError("Lagu tidak ditemukan");
+    if (!result.rowCount) throw new NotFoundError("Lagu tidak ditemukan");
 
-    return result.rows.map(mapSongDBToModel)[0];
+    return mapSongDBToModel(result.rows[0]);
   }
 
   async editSongById(id, { title, year, performer, genre, duration, albumId }) {
@@ -73,7 +73,7 @@ class SongService {
       text: "UPDATE songs SET title = $1, year = $2, performer = $3, genre = $4, duration = $5, album_id = $6, updated_at = $7 WHERE id = $8 RETURNING id",
       values: [title, year, performer, genre, duration, albumId, updatedAt, id],
     });
-    if (!result.rows.length)
+    if (!result.rowCount)
       throw new NotFoundError("Gagal memperbarui lagu. Id tidak ditemukan");
   }
 
@@ -82,7 +82,7 @@ class SongService {
       text: "DELETE FROM songs WHERE id = $1 RETURNING id",
       values: [id],
     });
-    if (!result.rows.length)
+    if (!result.rowCount)
       throw new NotFoundError("Lagu gagal dihapus. Id tidak ditemukan");
   }
 }
