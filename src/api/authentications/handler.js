@@ -1,7 +1,7 @@
 class AuthenticationsHandler {
   constructor(authenticationsService, userService, tokenManager, validator) {
     this._authenticationsService = authenticationsService;
-    this._userService = userService;
+    this._usersService = userService;
     this._tokenManager = tokenManager;
     this._validator = validator;
 
@@ -15,9 +15,13 @@ class AuthenticationsHandler {
     this._validator.validatePostAuthenticationPayload(request.payload);
 
     const { username, password } = request.payload;
-    const id = await this._userService.verifyUserCredential(username, password);
 
-    const accessToken = this._tokenManager.generateAccessToken({ id });
+    const id = await this._usersService.verifyUserCredential(
+      username,
+      password
+    );
+
+    const accessToken = this._tokenManager.generateAccesToken({ id });
     const refreshToken = this._tokenManager.generateRefreshToken({ id });
 
     await this._authenticationsService.addRefreshToken(refreshToken);

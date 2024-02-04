@@ -6,11 +6,11 @@ module.exports = {
   version: "1.0.0",
   register: async (
     server,
-    { authenticationsService, userService, tokenManager, validator }
+    { authenticationsService, usersService, tokenManager, validator }
   ) => {
     const authenticationsHandler = new AuthenticationsHandler(
       authenticationsService,
-      userService,
+      usersService,
       tokenManager,
       validator
     );

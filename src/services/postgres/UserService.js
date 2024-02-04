@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 
 const NotFoundError = require("../../exceptions/NotFoundError");
 const AuthenticationError = require("../../exceptions/AuthenticationError");
+const InvariantError = require("../../exceptions/InvariantError");
 
 class UserService {
   constructor() {
@@ -66,9 +67,9 @@ class UserService {
       throw new AuthenticationError("Kredensial yang Anda berikan salah");
 
     const { id, password: hashedPassword } = result.rows[0];
-    const matchedPassword = await bcrypt.compare(password, hashedPassword);
+    const match = await bcrypt.compare(password, hashedPassword);
 
-    if (!matchedPassword)
+    if (!match)
       throw new AuthenticationError("Kredensial yang Anda berikan salah");
 
     return id;
