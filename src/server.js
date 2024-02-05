@@ -1,7 +1,7 @@
 require("dotenv").config();
 
 const Hapi = require("@hapi/hapi");
-const JWT = require("@hapi/jwt");
+const Jwt = require("@hapi/jwt");
 
 const albums = require("./api/albums");
 const AlbumService = require("./services/postgres/AlbumService");
@@ -20,6 +20,14 @@ const AuthenticationService = require("./services/postgres/AuthenticationService
 const TokenManager = require("./tokenize/TokenManager");
 const AuthenticationsValidator = require("./validator/authentications");
 
+const playlists = require("./api/playlists");
+const PlaylistService = require("./services/postgres/PlaylistService");
+const PlaylistsValidator = require("./validator/playlists");
+
+const collaborations = require("./api/collaborations");
+const CollaborationService = require("./services/postgres/CollaborationService");
+const CollaborationsValidator = require("./validator/collaborations");
+
 const ClientError = require("./exceptions/ClientError");
 
 const init = async () => {
@@ -27,6 +35,8 @@ const init = async () => {
   const albumsService = new AlbumService();
   const usersService = new UserService();
   const authenticationsService = new AuthenticationService();
+  const collaborationsService = new CollaborationService();
+  const playlistsService = new PlaylistService(collaborationsService);
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -40,7 +50,7 @@ const init = async () => {
 
   await server.register([
     {
-      plugin: JWT,
+      plugin: Jwt,
     },
   ]);
 
@@ -106,6 +116,23 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
+      },
+    },
+    {
+      plugin: playlists,
+      options: {
+        playlistsService,
+        songsService,
+        validator: PlaylistsValidator,
+      },
+    },
+    {
+      plugin: collaborations,
+      options: {
+        collaborationsService,
+        playlistsService,
+        usersService,
+        validator: CollaborationsValidator,
       },
     },
   ]);
